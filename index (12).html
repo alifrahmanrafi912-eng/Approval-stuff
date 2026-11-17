@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Marketing Operations — Global Consumer Ltd.</title>
+<style>
+:root{
+  --navy:#0b2a4a; --navy2:#0e3158; --navy3:#15406e; --accent:#0f6cbd; --accent-d:#0b5699;
+  --bg:#f3f5f8; --card:#ffffff; --border:#d9dee5; --border2:#e8ecf1; --text:#1f2933; --muted:#5b6776;
+  --green:#1e7e4a; --green-d:#176a3d; --red:#b3261e; --red-d:#971f19; --amber:#8a5300;
+  --shadow:0 1px 2px rgba(16,24,40,.06);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;font-size:14px;line-height:1.45;color:var(--text);background:var(--bg);overflow:hidden}
+button{font:inherit;cursor:pointer}
+a{color:var(--accent);cursor:pointer;text-decoration:none}
+a:hover{text-decoration:underline}
+svg{flex:none}
+
+.app{display:grid;grid-template-columns:232px 1fr;grid-template-rows:56px 1fr;height:100vh}
+
+/* Top bar */
+.topbar{grid-column:1/3;background:var(--navy);color:#fff;display:flex;align-items:center;gap:18px;padding:0 18px 0 0;border-bottom:1px solid #071c33;position:relative;z-index:20}
+.brand{width:232px;display:flex;align-items:center;gap:10px;padding:0 16px;height:100%;flex:none}
+.logo{width:30px;height:30px;border-radius:6px;background:#fff;color:var(--navy);font-weight:800;font-size:13px;display:grid;place-items:center;letter-spacing:.5px}
+.brand b{display:block;font-size:14px;font-weight:600;line-height:1.1}
+.brand small{display:block;font-size:11px;color:#9db6d1;margin-top:2px}
+.search{position:relative;flex:1;max-width:560px}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#9db6d1}
+.search input{width:100%;height:34px;border-radius:4px;border:1px solid #2a4f78;background:#123a63;color:#fff;padding:0 12px 0 36px;font:inherit;outline:none}
+.search input::placeholder{color:#9db6d1}
+.search input:focus{background:#fff;color:var(--text);border-color:#fff}
+.search input:focus::placeholder{color:#8794a3}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.tb-date{font-size:12.5px;color:#cfe0f2;padding:0 12px;border-right:1px solid #2a4f78;margin-right:6px;white-space:nowrap}
+.tb-btn{background:transparent;border:0;color:#fff;width:36px;height:36px;border-radius:4px;display:grid;place-items:center;position:relative}
+.tb-btn:hover{background:rgba(255,255,255,.12)}
+.dot{position:absolute;top:3px;right:2px;min-width:16px;height:16px;border-radius:8px;background:#d13438;color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center;padding:0 4px}
+.profile{display:flex;align-items:center;gap:10px;padding:4px 8px;border-radius:4px;background:transparent;border:0;color:#fff;text-align:left}
+.profile:hover{background:rgba(255,255,255,.12)}
+.avatar{width:32px;height:32px;border-radius:50%;background:#5aa9e6;color:#06223f;font-weight:700;font-size:12px;display:grid;place-items:center}
+.profile b{display:block;font-size:12.5px;font-weight:600;line-height:1.15}
+.profile small{display:block;font-size:11px;color:#9db6d1}
+.bellwrap{position:relative}
+.bellmenu{display:none;position:absolute;right:0;top:42px;width:360px;background:#fff;color:var(--text);border:1px solid var(--border);border-radius:6px;box-shadow:0 8px 24px rgba(16,24,40,.18)}
+.bellmenu.open{display:block}
+.bellmenu .bh{padding:10px 14px;font-weight:600;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between}
+.bellitem{padding:10px 14px;border-bottom:1px solid var(--border2);cursor:pointer;display:flex;gap:10px}
+.bellitem:hover{background:#f6f8fb}
+.bellitem .t{font-size:11.5px;color:var(--muted)}
+.bellmenu .bf{padding:9px 14px;text-align:center}
+.udot{width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:6px;flex:none}
+.udot.read{background:transparent;border:1px solid #c3ccd6}
+
+/* Sidebar */
+.sidebar{background:var(--navy2);color:#d6e3f1;display:flex;flex-direction:column;padding:12px 0;overflow:auto}
+.navgroup{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:#7f9bb9;padding:10px 20px 6px}
+.nav{display:flex;align-items:center;gap:12px;width:100%;padding:10px 20px;background:none;border:0;color:inherit;text-align:left;border-left:3px solid transparent;font-size:14px}
+.nav:hover{background:rgba(255,255,255,.07)}
+.nav.active{background:rgba(255,255,255,.13);color:#fff;border-left-color:#5aa9e6;font-weight:600}
+.nav .badgec{margin-left:auto;background:#d13438;color:#fff;font-size:11px;font-weight:700;border-radius:9px;padding:0 7px;min-width:20px;text-align:center}
+.nav .badgec.blue{background:#2f6fb0}
+.sidefoot{margin-top:auto;padding:14px 20px;font-size:11.5px;color:#7f9bb9;border-top:1px solid rgba(255,255,255,.1)}
+
+/* Main */
+.main{overflow:auto;padding:20px 28px 48px}
+.wrap{max-width:1760px;margin:0 auto}
+.crumbs{font-size:12.5px;color:var(--muted);display:flex;gap:8px;margin-bottom:6px}
+.pagehead{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:14px}
+h1{margin:0;font-size:22px;font-weight:600;color:#10243b}
+.sub{color:var(--muted);margin-top:2px;font-size:13px}
+.headmeta{display:flex;align-items:center;gap:14px}
+.muted{color:var(--muted)} .sm{font-size:12.5px}
+.mt{margin-top:16px}
+
+/* Tabs */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:10px 18px;color:var(--muted);font-size:14px;margin-bottom:-1px;display:flex;align-items:center;gap:8px}
+.tab:hover{color:var(--text);background:rgba(15,108,189,.05)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.tab .cnt{background:#e4e9f0;color:#41505f;border-radius:9px;font-size:11px;padding:0 7px;font-weight:600}
+.tab .cnt.red{background:#fbe3e0;color:var(--red)}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:6px;box-shadow:var(--shadow)}
+.cardhead{padding:12px 16px;border-bottom:1px solid var(--border2);font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.cardbody{padding:16px}
+.cardfoot{padding:10px 16px;border-top:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#fafbfc;border-radius:0 0 6px 6px}
+.split{display:grid;grid-template-columns:minmax(0,1fr) 500px;gap:20px;align-items:start}
+.side{display:flex;flex-direction:column;gap:16px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+
+/* Preview */
+.stage{height:clamp(320px,calc(100vh - 345px),700px);background:#e7ebf1;display:flex;align-items:center;justify-content:center;overflow:auto;padding:16px;transition:background .15s}
+.stage.drag{background:#d5e6f7;outline:2px dashed var(--accent);outline-offset:-8px}
+.stage img{max-width:100%;max-height:100%;box-shadow:0 2px 10px rgba(16,24,40,.22);background:#fff;display:block}
+.stage.zoomed{display:block}
+.stage.zoomed img{max-width:none;max-height:none;height:auto;margin:0 auto}
+.zoom{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
+.ib{background:#fff;border:1px solid var(--border);border-radius:4px;height:26px;min-width:26px;padding:0 6px;color:var(--text)}
+.ib:hover{background:#f1f4f8}
+.metaline{font-size:12.5px;color:var(--muted)}
+.foot-actions{display:flex;gap:8px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:4px;border:1px solid transparent;padding:8px 16px;font-weight:600;transition:background .12s}
+.btn.sm{padding:5px 12px;font-size:13px}
+.btn.lg{height:48px;font-size:15px;flex:1}
+.btn.approve{background:var(--green);color:#fff}.btn.approve:hover{background:var(--green-d)}
+.btn.reject{background:var(--red);color:#fff}.btn.reject:hover{background:var(--red-d)}
+.btn.secondary{background:#fff;border-color:#b8c2cf;color:#1f2933}.btn.secondary:hover{background:#f1f4f8}
+.btn.primary{background:var(--accent);color:#fff}.btn.primary:hover{background:var(--accent-d)}
+.btn:focus-visible,.tab:focus-visible,.nav:focus-visible{outline:2px solid #5aa9e6;outline-offset:2px}
+.btnrow{display:flex;gap:12px}
+.hint{font-size:12.5px;color:var(--muted);margin:12px 0 0}
+.notice{background:#f1f5fa;border:1px solid #d4deea;border-radius:4px;padding:10px 12px;color:#35465a;font-size:13px}
+
+/* Approval card */
+.statusrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.statusrow .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.due{font-size:12.5px;color:var(--muted)}
+.due b{color:var(--red)}
+.decision{border-radius:6px;padding:14px 16px;border:1px solid;animation:fadein .3s ease}
+.decision.ok{background:#eaf6ef;border-color:#b7dcc6}
+.decision.bad{background:#fcecea;border-color:#efc0bb}
+.dlabel{font-size:11.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+.dstatus{font-size:34px;font-weight:700;letter-spacing:1.5px;line-height:1.2}
+.decision.ok .dstatus{color:var(--green)}
+.decision.bad .dstatus{color:var(--red)}
+.dmeta{font-size:13px;color:#33414f;margin-top:4px}
+.dmeta div{margin-top:3px}
+@keyframes fadein{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+/* Badges */
+.badge{display:inline-block;border-radius:3px;padding:2px 9px;font-size:11.5px;font-weight:700;letter-spacing:.6px;border:1px solid;white-space:nowrap}
+.badge.ok{background:#e6f4ec;color:var(--green-d);border-color:#b7dcc6}
+.badge.bad{background:#fbe9e7;color:#a3211a;border-color:#efc0bb}
+.badge.warn{background:#fff4e0;color:var(--amber);border-color:#f0d7a5}
+.prio{display:inline-flex;align-items:center;gap:6px;font-size:13px}
+.prio::before{content:"";width:8px;height:8px;border-radius:50%;background:#8a96a3}
+.prio.high::before{background:var(--red)} .prio.medium::before{background:#d08a00}
+
+/* DL */
+.dl{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.dl div{padding:9px 16px;border-bottom:1px solid var(--border2)}
+.dl div:nth-last-child(-n+2){border-bottom:0}
+.dl dt,.dl .k{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.dl .v{font-weight:500;margin-top:1px;word-break:break-word}
+.dl .full{grid-column:1/3}
+
+/* Tables */
+.tblwrap{overflow:auto}
+table.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:600;padding:10px 14px;background:#f7f9fb;border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--border2);vertical-align:top}
+.tbl tr.click{cursor:pointer}
+.tbl tr.click:hover td{background:#f4f8fd}
+.tbl tr:last-child td{border-bottom:0}
+.tbl .id{font-weight:600;color:var(--accent);white-space:nowrap}
+.empty{text-align:center;color:var(--muted);padding:28px!important}
+body.compact .tbl td{padding:6px 14px}
+.pass{color:var(--green-d);font-weight:600}.fail{color:var(--red);font-weight:700}
+
+.toolbar{display:flex;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+select,textarea,input[type=text]{font:inherit;border:1px solid #b8c2cf;border-radius:4px;padding:7px 10px;background:#fff;color:var(--text)}
+select:focus,textarea:focus{outline:2px solid #9cc5ec;border-color:var(--accent)}
+.chip{display:inline-flex;gap:6px;align-items:center;background:#e8f1fb;color:#0b4f8a;border-radius:12px;padding:2px 4px 2px 10px;font-size:12.5px}
+.chip button{background:none;border:0;color:inherit;font-size:15px;line-height:1;padding:0 6px}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:16px}
+.kpi{padding:16px 18px;border-left:4px solid var(--accent)}
+.kpi .n{font-size:30px;font-weight:600;line-height:1.1}
+.kpi .l{color:var(--muted);font-size:13px;margin-top:2px}
+.kpi.g{border-left-color:var(--green)}.kpi.r{border-left-color:var(--red)}.kpi.a{border-left-color:#d08a00}
+.alertbar{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff7e8;border:1px solid #f0d7a5;border-radius:6px;padding:12px 16px;margin-bottom:16px}
+.alertbar.info{background:#eef4fb;border-color:#cfdeef}
+
+/* Feed / timeline */
+.feed{list-style:none;margin:0;padding:6px 16px 10px}
+.feed li{padding:10px 0;border-bottom:1px solid var(--border2);display:flex;gap:12px}
+.feed li:last-child{border-bottom:0}
+.feed .ft{font-size:12px;color:var(--muted)}
+.tl{list-style:none;margin:0;padding:8px 20px 14px;position:relative}
+.tl li{position:relative;padding:12px 0 12px 28px;border-bottom:1px solid var(--border2)}
+.tl li:last-child{border-bottom:0}
+.tl li::before{content:"";position:absolute;left:3px;top:18px;width:10px;height:10px;border-radius:50%;background:#8aa3bd}
+.tl li::after{content:"";position:absolute;left:7px;top:30px;bottom:-12px;width:2px;background:#d9e1ea}
+.tl li:last-child::after{display:none}
+.tl li.ok::before{background:var(--green)}.tl li.bad::before{background:var(--red)}
+.tl .tt{font-size:12.5px;color:var(--muted)}
+.tl .ev{font-weight:600}
+.tl .dt{font-size:13px;color:#33414f;margin-top:2px}
+.cm{padding:12px 16px;border-bottom:1px solid var(--border2)}
+.cm:last-child{border-bottom:0}
+.cm b{font-weight:600}.cm small{color:var(--muted)}
+.cm p{margin:4px 0 0}
+
+/* Documents */
+.docsplit{display:grid;grid-template-columns:320px minmax(0,1fr);gap:20px;align-items:start}
+.doclist{list-style:none;margin:0;padding:0}
+.doclist li{padding:12px 16px;border-bottom:1px solid var(--border2);cursor:pointer;display:flex;gap:12px;border-left:3px solid transparent}
+.doclist li:last-child{border-bottom:0}
+.doclist li:hover{background:#f6f9fc}
+.doclist li.sel{background:#eef4fb;border-left-color:var(--accent)}
+.doclist .dn{font-weight:600}.doclist .dm{font-size:12px;color:var(--muted)}
+.paper{background:#fff;border:1px solid #cfd6df;box-shadow:0 1px 3px rgba(16,24,40,.1);padding:34px 44px 38px;max-width:900px;margin:0 auto}
+.paper .ph{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--navy);padding-bottom:12px}
+.paper .org{font-weight:700;letter-spacing:1px;color:var(--navy)}
+.paper .dept{font-size:12.5px;color:var(--muted)}
+.paper .phr{text-align:right;font-size:12px;color:var(--muted)}
+.paper h2{font-size:21px;margin:18px 0 6px;color:#10243b}
+.paper h4{margin:22px 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--navy);border-bottom:1px solid var(--border);padding-bottom:4px}
+.paper table{width:100%;border-collapse:collapse;font-size:13.5px}
+.paper table td,.paper table th{border:1px solid #d4dae2;padding:7px 10px;text-align:left;vertical-align:top}
+.paper table th{background:#f3f5f8;font-weight:600;width:210px}
+.paper table.grid th{width:auto}
+.paper p{margin:6px 0}
+.res{display:inline-block;font-weight:700;letter-spacing:1px;padding:2px 12px;border:2px solid;border-radius:3px;margin-left:8px}
+.res.fail{color:var(--red);border-color:var(--red);background:#fdf1f0}
+.res.pass{color:var(--green-d);border-color:var(--green);background:#eef8f2}
+.resultline{font-size:15px;font-weight:600;margin:6px 0 14px}
+.gauge{margin:12px 0 4px}
+.gtrack{position:relative;height:16px;background:#e9edf2;border-radius:3px}
+.gfill{height:100%;border-radius:3px 0 0 3px}
+.gthr{position:absolute;top:-6px;bottom:-6px;width:2px;background:#33414f}
+.gscale{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:4px}
+.gleg{font-size:12.5px;color:#33414f;margin-top:6px}
+.sigs{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:30px;font-size:12.5px}
+.sigs div{border-top:1px solid #8794a3;padding-top:6px}
+
+/* Settings */
+.setrow{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 16px;border-bottom:1px solid var(--border2)}
+.setrow:last-child{border-bottom:0}
+.setrow small{display:block;color:var(--muted)}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:12.5px;padding:0}
+.linkbtn:hover{color:var(--red)}
+
+/* Modal & toast */
+.backdrop{position:fixed;inset:0;background:rgba(11,42,74,.48);display:grid;place-items:center;z-index:100;animation:fadein .15s ease}
+.modal{background:#fff;border-radius:6px;width:500px;max-width:calc(100vw - 32px);box-shadow:0 16px 48px rgba(0,0,0,.3)}
+.modal .mh{padding:16px 20px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center}
+.modal h3{margin:0;font-size:17px;font-weight:600}
+.modal .mb{padding:18px 20px}
+.modal .mf{padding:14px 20px;border-top:1px solid var(--border2);display:flex;justify-content:flex-end;gap:10px;background:#fafbfc;border-radius:0 0 6px 6px}
+.modal .q{font-size:15.5px;margin:0 0 12px}
+.modal .ref{background:#f3f5f8;border:1px solid var(--border2);border-radius:4px;padding:8px 12px;font-size:13px;color:#33414f}
+.modal .warn{margin-top:12px;font-size:12.5px;color:var(--amber)}
+.modal label{display:block;font-weight:600;font-size:13px;margin:14px 0 5px}
+.modal label small{font-weight:400;color:var(--muted)}
+.modal select,.modal textarea{width:100%}
+.modal textarea{resize:vertical;min-height:72px}
+#toasts{position:fixed;top:66px;right:22px;z-index:200;display:flex;flex-direction:column;gap:8px}
+.toast{background:#fff;border:1px solid var(--border);border-left:4px solid var(--green);border-radius:4px;box-shadow:0 6px 18px rgba(16,24,40,.16);padding:11px 16px;min-width:280px;font-size:13.5px;display:flex;gap:10px;align-items:center;animation:fadein .25s ease}
+.toast.rej{border-left-color:var(--red)} .toast.info{border-left-color:var(--accent)} .toast.warn{border-left-color:#d08a00}
+.toast.out{opacity:0;transition:opacity .4s}
+
+@media (max-width:1280px){
+  .split{grid-template-columns:minmax(0,1fr) 420px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:1100px){
+  .app{grid-template-columns:64px 1fr}
+  .brand{width:64px;padding:0 17px}.brand div{display:none}
+  .nav span.lbl,.navgroup,.sidefoot,.nav .badgec{display:none}
+  .nav{justify-content:center;padding:12px 0}
+  .split,.docsplit,.grid2{grid-template-columns:1fr}
+  .tb-date,.profile div{display:none}
+}
+@media (max-width:760px){.search{display:none}.main{padding:14px}.pagehead{flex-direction:column}.btnrow{flex-direction:column}.paper{padding:20px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">GC</div><div><b>Global Consumer Ltd.</b><small>Marketing Operations</small></div></div>
+    <div class="search"><span id="ico-search"></span><input id="gsearch" type="text" placeholder="Search campaigns, IDs, products…" autocomplete="off" aria-label="Search campaigns"></div>
+    <div class="tb-right">
+      <div class="tb-date" id="tbDate"></div>
+      <button class="tb-btn" data-act="fs" id="fsBtn" title="Toggle fullscreen" aria-label="Toggle fullscreen"></button>
+      <div class="bellwrap">
+        <button class="tb-btn" data-act="bell" id="bellBtn" title="Notifications" aria-label="Notifications"></button>
+        <div class="bellmenu" id="bellMenu"></div>
+      </div>
+      <button class="profile" data-act="profile" title="Account settings">
+        <div class="avatar">MR</div>
+        <div><b>Mohammad Ariful Hasan Rian</b><small>Marketing Intern · Marketing &amp; Brand Communications</small></div>
+      </button>
+    </div>
+  </header>
+  <nav class="sidebar" id="sidebar" aria-label="Main navigation"></nav>
+  <main class="main" id="main"><div class="wrap" id="view"></div></main>
+</div>
+<div id="toasts" aria-live="polite"></div>
+<div id="modalRoot"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- Static data ---------- */
+var USER={name:'Mohammad Ariful Hasan Rian',dept:'Marketing & Brand Communications',role:'Marketing Intern'};
+var REVIEW_DATE='17 Nov 2026';
+var MAIN='MKT-2026-117';
+var KEY='gcl_mops_state_v1', IMGKEY='gcl_mops_img_v1_';
+var REASONS=['Product safety concerns','Inaccurate promotional claims','Compliance requirements not met','Creative revisions required','Other'];
+var THEMES=[['#0b2a4a','#2a6f97'],['#3a1f5c','#7b4aa3'],['#124a3a','#2e8f6b'],['#5a2a12','#c4672b'],['#1b3a5f','#4a7fb5'],['#4a1a2b','#a8466a'],['#23394d','#5c8aa8'],['#3b3b12','#8a8a2a']];
+
+var CAMPAIGNS=[
+ {id:'MKT-2026-117',name:'Power for Your Journey',product:'Portable Power Bank — PB-20',type:'Digital Marketing',dept:'Brand Communications',submitted:'16 Nov 2026',assigned:'17 Nov 2026',deadline:'17 Nov 2026',status:'Pending Approval',priority:'High',by:'Nusrat Jahan',reviewer:USER.name,updated:'17 Nov 2026, 9:30 AM',attach:4,
+  safety:{id:'SAFE-2026-041',date:'12 Nov 2026',issued:'14 Nov 2026',peak:76.8,result:'FAILED'},
+  brief:{obj:'Build awareness and pre-orders for the PB-20 among commuters and frequent travellers.',aud:'Urban commuters and frequent travellers, aged 22–40',ch:'Social media, display advertising, paid search',msg:'Reliable portable power for every journey.',flight:'24 Nov 2026 – 31 Dec 2026'},
+  claims:[['20,000 mAh rated capacity','Cell specification sheet, PB-20 v1.3','Verified'],['Charges most smartphones multiple times on a single charge','Capacity test record LC-2026-088','Verified'],['Fast-charging output support','Output test report OT-2026-052','Verified']]},
+ {id:'MKT-2026-112',name:'Everyday Sound',product:'Wireless Earbuds — EB-300',type:'Social Media',dept:'Brand Communications',submitted:'12 Nov 2026',assigned:'13 Nov 2026',deadline:'18 Nov 2026',status:'Pending Approval',priority:'Medium',by:'Tanvir Ahmed',reviewer:'Farhana Rahman',updated:'13 Nov 2026, 9:00 AM',attach:4,safety:{id:'SAFE-2026-036',date:'9 Nov 2026',issued:'11 Nov 2026',peak:41.3,result:'PASSED'}},
+ {id:'MKT-2026-109',name:'Smart Home Starter Kit',product:'Smart Plug Set — SP-4',type:'Email Campaign',dept:'Digital Marketing',submitted:'13 Nov 2026',assigned:'14 Nov 2026',deadline:'20 Nov 2026',status:'Pending Approval',priority:'Low',by:'Mahmud Hasan',reviewer:'Imran Hossain',updated:'14 Nov 2026, 11:05 AM',attach:4,safety:{id:'SAFE-2026-038',date:'10 Nov 2026',issued:'12 Nov 2026',peak:38.9,result:'PASSED'}},
+ {id:'MKT-2026-104',name:'Winter Charge Offer',product:'Fast Charger — FC-65',type:'Retail Promotion',dept:'Trade Marketing',submitted:'9 Nov 2026',assigned:'10 Nov 2026',deadline:'12 Nov 2026',status:'Approved',priority:'High',by:'Nusrat Jahan',reviewer:'Farhana Rahman',updated:'11 Nov 2026, 2:40 PM',attach:4,decided:'11 Nov 2026, 2:40 PM',decidedBy:'Farhana Rahman',comment:'Claims verified against test report. Approved for release.',safety:{id:'SAFE-2026-033',date:'6 Nov 2026',issued:'8 Nov 2026',peak:44.1,result:'PASSED'}},
+ {id:'MKT-2026-098',name:'Bright Nights',product:'LED Desk Lamp — DL-12',type:'Digital Marketing',dept:'Brand Communications',submitted:'3 Nov 2026',assigned:'4 Nov 2026',deadline:'7 Nov 2026',status:'Approved',priority:'Medium',by:'Tanvir Ahmed',reviewer:'Imran Hossain',updated:'6 Nov 2026, 11:20 AM',attach:4,decided:'6 Nov 2026, 11:20 AM',decidedBy:'Imran Hossain',comment:'No issues identified.',safety:{id:'SAFE-2026-029',date:'30 Oct 2026',issued:'2 Nov 2026',peak:36.5,result:'PASSED'}},
+ {id:'MKT-2026-091',name:'Clear Calls',product:'Bluetooth Headset — BH-7',type:'Print Advertising',dept:'Brand Communications',submitted:'28 Oct 2026',assigned:'29 Oct 2026',deadline:'3 Nov 2026',status:'Rejected',priority:'Medium',by:'Mahmud Hasan',reviewer:'Imran Hossain',updated:'2 Nov 2026, 4:10 PM',attach:4,decided:'2 Nov 2026, 4:10 PM',decidedBy:'Imran Hossain',reason:'Creative revisions required',comment:'Legal disclaimer missing from print layout. Resubmit with updated artwork.',safety:{id:'SAFE-2026-024',date:'25 Oct 2026',issued:'27 Oct 2026',peak:39.2,result:'PASSED'}},
+ {id:'MKT-2026-087',name:'Stay Connected Week',product:'Wi-Fi Router — WR-AX1800',type:'Digital Marketing',dept:'Digital Marketing',submitted:'22 Oct 2026',assigned:'23 Oct 2026',deadline:'28 Oct 2026',status:'Approved',priority:'Low',by:'Nusrat Jahan',reviewer:'Farhana Rahman',updated:'27 Oct 2026, 10:05 AM',attach:4,decided:'27 Oct 2026, 10:05 AM',decidedBy:'Farhana Rahman',comment:'Approved as submitted.',safety:{id:'SAFE-2026-021',date:'19 Oct 2026',issued:'21 Oct 2026',peak:47.8,result:'PASSED'}},
+ {id:'MKT-2026-083',name:'Cable Essentials',product:'USB-C Cable Set — UC-3',type:'Social Media',dept:'Brand Communications',submitted:'15 Oct 2026',assigned:'16 Oct 2026',deadline:'21 Oct 2026',status:'Approved',priority:'Low',by:'Tanvir Ahmed',reviewer:'Imran Hossain',updated:'20 Oct 2026, 3:30 PM',attach:4,decided:'20 Oct 2026, 3:30 PM',decidedBy:'Imran Hossain',comment:'Approved. Minor copy edits applied by the team.',safety:{id:'SAFE-2026-017',date:'12 Oct 2026',issued:'14 Oct 2026',peak:33.4,result:'PASSED'}}
+];
+CAMPAIGNS.forEach(function(c,i){c.theme=THEMES[i%THEMES.length]});
+
+var BASE_NOTIFS=[
+ {id:'n1',t:'17 Nov 2026, 9:30 AM',text:'Campaign MKT-2026-117 "Power for Your Journey" has been assigned to you for review. Approval is due today.',cid:MAIN,read:false},
+ {id:'n2',t:'17 Nov 2026, 8:15 AM',text:'Product Safety Evaluation SAFE-2026-041 was attached to campaign MKT-2026-117.',cid:MAIN,read:false},
+ {id:'n3',t:'14 Nov 2026, 10:00 AM',text:'The weekly campaign digest for Marketing & Brand Communications is available.',cid:null,read:true},
+ {id:'n4',t:'11 Nov 2026, 2:40 PM',text:'Campaign MKT-2026-104 "Winter Charge Offer" was approved by Farhana Rahman.',cid:'MKT-2026-104',read:true}
+];
+
+/* ---------- State ---------- */
+function fresh(){return {v:1,dec:{},hist:{},notifs:BASE_NOTIFS.map(function(n){return Object.assign({},n)}),imgMeta:{},prefs:{email:true,compact:false}}}
+function load(){try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&s.v===1&&s.dec&&s.hist&&s.notifs)return s}catch(e){}return fresh()}
+var S=load();
+var imgCache={};
+CAMPAIGNS.forEach(function(c){try{var u=localStorage.getItem(IMGKEY+c.id);if(u&&S.imgMeta[c.id])imgCache[c.id]=u}catch(e){}});
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+var view='detail', selId=MAIN, tab='overview', docSel='safety', query='', sf='', zoom=100;
+
+/* ---------- Helpers ---------- */
+function $(s,r){return (r||document).querySelector(s)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function byId(id){return CAMPAIGNS.filter(function(c){return c.id===id})[0]}
+function cur(){return byId(selId)}
+function status(c){return S.dec[c.id]?S.dec[c.id].status:c.status}
+function isPending(c){return status(c)==='Pending Approval'}
+function mineOpen(){return CAMPAIGNS.filter(function(c){return isPending(c)&&c.reviewer===USER.name})}
+function unread(){return S.notifs.filter(function(n){return !n.read}).length}
+function pt(t){return Date.parse(String(t).replace(',',''))||0}
+function nowStr(){var d=new Date(),h=d.getHours(),m=('0'+d.getMinutes()).slice(-2),ap=h>=12?'PM':'AM';h=h%12||12;return REVIEW_DATE.replace(/^/,'')+', '+h+':'+m+' '+ap}
+function badge(s){var k=s==='Approved'?'ok':s==='Rejected'?'bad':'warn';return '<span class="badge '+k+'">'+esc(s.toUpperCase())+'</span>'}
+function prio(p){return '<span class="prio '+p.toLowerCase()+'">'+esc(p)+'</span>'}
+function fmtSize(b){return b>1048576?(b/1048576).toFixed(1)+' MB':Math.max(1,Math.round(b/1024))+' KB'}
+
+var ICONS={
+ dash:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>',
+ camp:'<path d="M4 4v17M4 5h13l-2 4 2 4H4"/>',
+ appr:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
+ docs:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>',
+ hist:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ bell:'<path d="M6 16v-5a6 6 0 1112 0v5l2 2H4z"/><path d="M10 21h4"/>',
+ set:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+ fs:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+ fsx:'<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>',
+ check:'<path d="M5 12.5l4.5 4.5L19 7"/>',
+ x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ up:'<path d="M12 16V4M7 9l5-5 5 5M4 20h16"/>'
+};
+function icon(n,s){s=s||18;return '<svg viewBox="0 0 24 24" width="'+s+'" height="'+s+'" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICONS[n]+'</svg>'}
+
+/* ---------- Creative artwork ---------- */
+var FONT='font-family="Segoe UI, Arial, sans-serif"';
+function creative117(){
+return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750">'+
+'<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#071d36"/><stop offset=".6" stop-color="#0c4a63"/><stop offset="1" stop-color="#14808a"/></linearGradient>'+
+'<linearGradient id="body" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6f8fb"/><stop offset="1" stop-color="#c3ccd7"/></linearGradient>'+
+'<linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>'+
+'<rect width="1200" height="750" fill="url(#bg)"/>'+
+'<circle cx="960" cy="140" r="110" fill="#ffd27a" opacity=".14"/>'+
+'<path d="M0 565C250 505 450 605 700 545S1050 485 1200 525V750H0Z" fill="#06182c" opacity=".5"/>'+
+'<path d="M0 630C300 580 520 680 760 620S1080 570 1200 600V750H0Z" fill="#041222" opacity=".6"/>'+
+'<g transform="translate(770 130) rotate(8 170 260)">'+
+'<rect x="18" y="26" width="340" height="520" rx="46" fill="#030b14" opacity=".35"/>'+
+'<rect width="340" height="520" rx="46" fill="url(#body)"/><rect width="340" height="270" rx="46" fill="url(#sheen)" opacity=".55"/>'+
+'<rect x="30" y="40" width="280" height="160" rx="22" fill="#0b2a4a"/>'+
+'<text x="170" y="118" text-anchor="middle" '+FONT+' font-size="46" font-weight="700" fill="#fff">PB-20</text>'+
+'<text x="170" y="160" text-anchor="middle" '+FONT+' font-size="21" fill="#8fd3dc">20,000 mAh</text>'+
+'<circle cx="100" cy="248" r="9" fill="#19a974"/><circle cx="145" cy="248" r="9" fill="#19a974"/><circle cx="190" cy="248" r="9" fill="#19a974"/><circle cx="235" cy="248" r="9" fill="#9aa8b6"/>'+
+'<rect x="60" y="440" width="62" height="24" rx="7" fill="#1d2b3a"/><rect x="139" y="440" width="62" height="24" rx="7" fill="#1d2b3a"/><rect x="218" y="440" width="62" height="24" rx="7" fill="#1d2b3a"/>'+
+'</g>'+
+'<text x="80" y="112" '+FONT+' font-size="22" font-weight="600" letter-spacing="6" fill="#8fd3dc">GLOBAL CONSUMER</text>'+
+'<text x="80" y="260" '+FONT+' font-size="86" font-weight="700" fill="#fff">Power for</text>'+
+'<text x="80" y="354" '+FONT+' font-size="86" font-weight="700" fill="#fff">Your Journey</text>'+
+'<text x="80" y="418" '+FONT+' font-size="30" fill="#d6e6ee">Charge anywhere. Go further.</text>'+
+'<rect x="80" y="466" width="240" height="62" rx="31" fill="#fff"/>'+
+'<text x="200" y="506" text-anchor="middle" '+FONT+' font-size="24" font-weight="700" fill="#0b2a4a">Discover PB-20</text>'+
+'<text x="80" y="700" '+FONT+' font-size="16" fill="#9db6c6">Portable Power Bank PB-20 · Terms apply</text>'+
+'</svg>'}
+function creativeGeneric(c){
+ var a=c.theme[0],b=c.theme[1],w=c.name.split(' '),m=Math.ceil(w.length/2),l1=w.slice(0,m).join(' '),l2=w.slice(m).join(' ');
+ return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+a+'"/><stop offset="1" stop-color="'+b+'"/></linearGradient></defs>'+
+ '<rect width="1200" height="750" fill="url(#g)"/><circle cx="1000" cy="170" r="210" fill="#fff" opacity=".07"/><circle cx="900" cy="560" r="150" fill="#fff" opacity=".06"/><rect x="760" y="300" width="300" height="300" rx="40" fill="#fff" opacity=".1"/>'+
+ '<text x="80" y="112" '+FONT+' font-size="22" font-weight="600" letter-spacing="6" fill="#fff" opacity=".8">GLOBAL CONSUMER</text>'+
+ '<text x="80" y="300" '+FONT+' font-size="80" font-weight="700" fill="#fff">'+esc(l1)+'</text>'+
+ '<text x="80" y="392" '+FONT+' font-size="80" font-weight="700" fill="#fff">'+esc(l2)+'</text>'+
+ '<text x="80" y="452" '+FONT+' font-size="28" fill="#fff" opacity=".85">'+esc(c.product)+'</text>'+
+ '<rect x="80" y="500" width="210" height="58" rx="29" fill="#fff"/><text x="185" y="539" text-anchor="middle" '+FONT+' font-size="22" font-weight="700" fill="'+a+'">Learn more</text></svg>'}
+function svgUri(c){return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(c.id===MAIN?creative117():creativeGeneric(c))}
+function fileName(c){var m=S.imgMeta[c.id];return m?m.name:(c.id===MAIN?'PB20_Hero_Banner_v2.png':c.id+'_Creative_v1.png')}
+
+/* ---------- Derived data ---------- */
+function decisionOf(c){
+ var d=S.dec[c.id];
+ if(d)return {status:d.status,by:d.by,at:d.at,reason:d.reason,comment:d.comment};
+ if(c.status!=='Pending Approval')return {status:c.status,by:c.decidedBy,at:c.decided,reason:c.reason||'',comment:c.comment||''};
+ return null;
+}
+function historyOf(c){
+ var h;
+ if(c.id===MAIN)h=[{t:'16 Nov 2026, 10:30 AM',e:'Campaign submitted.',by:c.by},{t:'16 Nov 2026, 3:15 PM',e:'Creative materials uploaded.',by:c.by},{t:'17 Nov 2026, 9:30 AM',e:'Campaign assigned for review.',by:'Marketing Operations'}];
+ else{
+  h=[{t:c.submitted+', 10:00 AM',e:'Campaign submitted.',by:c.by},{t:c.submitted+', 2:30 PM',e:'Creative materials uploaded.',by:c.by},{t:c.assigned+', 9:00 AM',e:'Campaign assigned for review.',by:'Marketing Operations'}];
+  if(c.decided)h.push({t:c.decided,e:'Campaign '+c.status.toLowerCase()+'.',by:c.decidedBy,detail:(c.reason?c.reason+'. ':'')+(c.comment||''),kind:c.status==='Approved'?'ok':'bad'});
+ }
+ return h.concat(S.hist[c.id]||[]);
+}
+function commentsOf(c){
+ var l=[];
+ if(c.id===MAIN){
+  l.push({n:'Farhana Rahman',r:'Brand Manager',t:'16 Nov 2026, 4:05 PM',x:'Creative aligns with brand guidelines. Please confirm product safety documentation before release.'});
+  l.push({n:'Sadia Karim',r:'Product Safety Laboratory',t:'17 Nov 2026, 8:15 AM',x:'Safety evaluation SAFE-2026-041 has been attached. Please review the findings under Supporting Documents.'});
+ }
+ var d=decisionOf(c);
+ if(d&&d.comment)l.push({n:d.by,r:'Assigned reviewer',t:d.at,x:d.comment});
+ return l;
+}
+function docsOf(c){return [
+ {k:'brief',name:'Campaign Brief',file:c.id+'_Brief.pdf',size:'184 KB',date:c.submitted,by:c.by,tag:''},
+ {k:'safety',name:'Product Safety Evaluation',file:c.safety.id+'.pdf',size:'412 KB',date:c.safety.issued,by:'Product Safety Laboratory',tag:c.safety.result},
+ {k:'claims',name:'Claims Substantiation Summary',file:c.id+'_Claims.xlsx',size:'96 KB',date:c.submitted,by:'Legal & Regulatory',tag:''},
+ {k:'asset',name:'Creative Asset',file:fileName(c),size:S.imgMeta[c.id]?fmtSize(S.imgMeta[c.id].size):'1.2 MB',date:c.submitted,by:c.by,tag:''}
+]}
+function checksOf(c){var f=c.safety.result==='FAILED';return [
+ ['Brand guideline compliance','Brand Communications','Passed'],
+ ['Claims substantiation','Legal & Regulatory','Passed'],
+ ['Product safety evaluation ('+c.safety.id+')','Product Safety Laboratory',f?'Failed':'Passed'],
+ ['Legal disclaimer review','Legal & Regulatory','Passed']]}
+
+/* ---------- Views ---------- */
+function vDashboard(){
+ var cnt=function(s){return CAMPAIGNS.filter(function(c){return status(c)===s}).length};
+ var mine=mineOpen(), pending=CAMPAIGNS.filter(isPending).sort(function(a,b){return pt(a.deadline)-pt(b.deadline)});
+ var alert=mine.length?'<div class="alertbar"><div><b>'+mine.length+' campaign'+(mine.length>1?'s':'')+' awaiting your decision.</b> <span class="muted">Approval deadline: '+esc(mine[0].deadline)+'.</span></div><button class="btn primary sm" data-act="open" data-id="'+mine[0].id+'">Review now</button></div>'
+  :'<div class="alertbar info"><div><b>You have no campaigns awaiting your decision.</b> <span class="muted">New assignments will appear here and in Notifications.</span></div></div>';
+ var ev=[];CAMPAIGNS.forEach(function(c){historyOf(c).forEach(function(h){ev.push({c:c,h:h})})});
+ ev.sort(function(a,b){return pt(b.h.t)-pt(a.h.t)});
+ var feed=ev.slice(0,7).map(function(x){return '<li><div><div><b>'+esc(x.c.id)+'</b> · '+esc(x.h.e)+'</div><div class="ft">'+esc(x.h.by)+' · '+esc(x.h.t)+'</div></div></li>'}).join('');
+ var q=pending.map(function(c){return '<tr class="click" data-act="open" data-id="'+c.id+'"><td class="id">'+c.id+'</td><td>'+esc(c.name)+'</td><td>'+esc(c.deadline)+'</td><td>'+prio(c.priority)+'</td><td>'+esc(c.reviewer)+'</td></tr>'}).join('')||'<tr><td colspan="5" class="empty">No campaigns are currently pending approval.</td></tr>';
+ return '<div class="pagehead"><div><h1>Dashboard</h1><div class="sub">Welcome back, Mohammad. Approval workload for '+REVIEW_DATE+'.</div></div></div>'+alert+
+ '<div class="kpis"><div class="card kpi a"><div class="n">'+mine.length+'</div><div class="l">Awaiting your approval</div></div><div class="card kpi"><div class="n">'+cnt('Pending Approval')+'</div><div class="l">Pending (all reviewers)</div></div><div class="card kpi g"><div class="n">'+cnt('Approved')+'</div><div class="l">Approved campaigns</div></div><div class="card kpi r"><div class="n">'+cnt('Rejected')+'</div><div class="l">Rejected campaigns</div></div></div>'+
+ '<div class="grid2"><div class="card"><div class="cardhead">Approval Queue</div><div class="tblwrap"><table class="tbl"><thead><tr><th>ID</th><th>Campaign</th><th>Deadline</th><th>Priority</th><th>Reviewer</th></tr></thead><tbody>'+q+'</tbody></table></div></div>'+
+ '<div class="card"><div class="cardhead">Recent Activity</div><ul class="feed">'+feed+'</ul></div></div>';
+}
+function campRow(c){return '<tr class="click" data-act="open" data-id="'+c.id+'"><td class="id">'+c.id+'</td><td><b>'+esc(c.name)+'</b></td><td>'+esc(c.product)+'</td><td>'+esc(c.type)+'</td><td>'+esc(c.submitted)+'</td><td>'+esc(c.deadline)+'</td><td>'+prio(c.priority)+'</td><td>'+badge(status(c))+'</td><td>'+esc(c.reviewer)+'</td></tr>'}
+function filtered(){var q=query.trim().toLowerCase();return CAMPAIGNS.filter(function(c){return (!sf||status(c)===sf)&&(!q||[c.id,c.name,c.product,c.type,c.by,c.reviewer,c.dept].join(' ').toLowerCase().indexOf(q)>-1)})}
+function metaHtml(n){return '<span class="muted sm">'+n+' campaign'+(n===1?'':'s')+'</span>'+(query?' <span class="chip">Search: “'+esc(query)+'”<button data-act="clearq" title="Clear search" aria-label="Clear search">×</button></span>':'')}
+function vCampaigns(){
+ var l=filtered();
+ return '<div class="pagehead"><div><h1>Campaigns</h1><div class="sub">All marketing campaigns submitted for approval. Use the search bar above to find a campaign.</div></div></div>'+
+ '<div class="toolbar"><select data-filter aria-label="Filter by status"><option value="">All statuses</option><option'+(sf==='Pending Approval'?' selected':'')+'>Pending Approval</option><option'+(sf==='Approved'?' selected':'')+'>Approved</option><option'+(sf==='Rejected'?' selected':'')+'>Rejected</option></select><div id="cmpMeta">'+metaHtml(l.length)+'</div></div>'+
+ '<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr><th>Campaign ID</th><th>Campaign Name</th><th>Product</th><th>Type</th><th>Submitted</th><th>Deadline</th><th>Priority</th><th>Status</th><th>Reviewer</th></tr></thead><tbody id="cmpBody">'+(l.map(campRow).join('')||'<tr><td colspan="9" class="empty">No campaigns match your search.</td></tr>')+'</tbody></table></div></div>';
+}
+function refreshRows(){
+ var l=filtered(),b=$('#cmpBody');if(!b)return;
+ b.innerHTML=l.map(campRow).join('')||'<tr><td colspan="9" class="empty">No campaigns match your search.</td></tr>';
+ $('#cmpMeta').innerHTML=metaHtml(l.length);
+}
+function vPending(){
+ var l=CAMPAIGNS.filter(isPending).sort(function(a,b){return pt(a.deadline)-pt(b.deadline)});
+ var rows=l.map(function(c){var mine=c.reviewer===USER.name;return '<tr class="click" data-act="open" data-id="'+c.id+'"><td class="id">'+c.id+'</td><td><b>'+esc(c.name)+'</b><div class="muted sm">'+esc(c.product)+'</div></td><td>'+esc(c.type)+'</td><td>'+esc(c.deadline)+(c.deadline===REVIEW_DATE?' <span class="fail sm">Due today</span>':'')+'</td><td>'+prio(c.priority)+'</td><td>'+esc(c.reviewer)+'</td><td>'+(mine?'<button class="btn primary sm" data-act="open" data-id="'+c.id+'">Review</button>':'<span class="muted sm">View only</span>')+'</td></tr>'}).join('');
+ return '<div class="pagehead"><div><h1>Pending Approvals</h1><div class="sub">Campaigns waiting for a decision. Items assigned to you can be approved or rejected.</div></div></div>'+
+ '<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr><th>Campaign ID</th><th>Campaign</th><th>Type</th><th>Deadline</th><th>Priority</th><th>Assigned Reviewer</th><th></th></tr></thead><tbody>'+(rows||'<tr><td colspan="7" class="empty">No campaigns are currently pending approval. Decisions are available under Review History.</td></tr>')+'</tbody></table></div></div>';
+}
+function vDocs(){
+ var rows='';
+ CAMPAIGNS.forEach(function(c){
+  var s=c.safety;
+  rows+='<tr class="click" data-act="opendoc" data-id="'+c.id+'" data-k="safety"><td><b>Product Safety Evaluation</b></td><td>'+s.id+'</td><td>'+esc(c.product)+'</td><td>'+c.id+'</td><td>'+esc(s.issued)+'</td><td><span class="'+(s.result==='FAILED'?'fail':'pass')+'">'+s.result+'</span></td></tr>';
+  rows+='<tr class="click" data-act="opendoc" data-id="'+c.id+'" data-k="claims"><td><b>Claims Substantiation Summary</b></td><td>'+c.id+'-CL</td><td>'+esc(c.product)+'</td><td>'+c.id+'</td><td>'+esc(c.submitted)+'</td><td><span class="pass">Verified</span></td></tr>';
+ });
+ return '<div class="pagehead"><div><h1>Product Documents</h1><div class="sub">Product safety and claims documents attached to campaigns. Select a row to open it.</div></div></div>'+
+ '<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr><th>Document</th><th>Reference</th><th>Product</th><th>Campaign</th><th>Issued</th><th>Result</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+}
+function vHistory(){
+ var rows=[];
+ CAMPAIGNS.forEach(function(c){var d=decisionOf(c);if(d)rows.push({c:c,d:d})});
+ rows.sort(function(a,b){return pt(b.d.at)-pt(a.d.at)});
+ var h=rows.map(function(r){return '<tr class="click" data-act="open" data-id="'+r.c.id+'"><td style="white-space:nowrap">'+esc(r.d.at)+'</td><td class="id">'+r.c.id+'</td><td><b>'+esc(r.c.name)+'</b></td><td>'+badge(r.d.status)+'</td><td>'+esc(r.d.by)+'</td><td>'+esc((r.d.reason?r.d.reason+'. ':'')+(r.d.comment||''))+'</td></tr>'}).join('');
+ return '<div class="pagehead"><div><h1>Review History</h1><div class="sub">Completed approval decisions, most recent first.</div></div></div>'+
+ '<div class="card"><div class="tblwrap"><table class="tbl"><thead><tr><th>Decision Time</th><th>Campaign ID</th><th>Campaign</th><th>Decision</th><th>Decided By</th><th>Reason / Comment</th></tr></thead><tbody>'+(h||'<tr><td colspan="6" class="empty">No decisions have been recorded yet.</td></tr>')+'</tbody></table></div></div>';
+}
+function vNotifs(){
+ var l=S.notifs.map(function(n){return '<li data-act="notif" data-id="'+n.id+'" style="cursor:pointer"><span class="udot '+(n.read?'read':'')+'"></span><div><div>'+esc(n.text)+'</div><div class="ft">'+esc(n.t)+(n.cid?' · '+n.cid:'')+'</div></div></li>'}).join('');
+ return '<div class="pagehead"><div><h1>Notifications</h1><div class="sub">'+unread()+' unread</div></div><button class="btn secondary sm" data-act="markall">Mark all as read</button></div><div class="card"><ul class="feed">'+l+'</ul></div>';
+}
+function vSettings(){
+ return '<div class="pagehead"><div><h1>Settings</h1><div class="sub">Account and display preferences.</div></div></div>'+
+ '<div class="grid2"><div class="card"><div class="cardhead">Account</div><div class="dl"><div><div class="k">Name</div><div class="v">'+USER.name+'</div></div><div><div class="k">Role</div><div class="v">'+USER.role+'</div></div><div class="full"><div class="k">Department</div><div class="v">'+USER.dept+'</div></div></div></div>'+
+ '<div class="card"><div class="cardhead">Preferences</div>'+
+ '<div class="setrow"><div>Email notifications<small>Receive an email when a campaign is assigned to you.</small></div><input type="checkbox" data-pref="email" '+(S.prefs.email?'checked':'')+' aria-label="Email notifications"></div>'+
+ '<div class="setrow"><div>Compact tables<small>Reduce row spacing in lists.</small></div><input type="checkbox" data-pref="compact" '+(S.prefs.compact?'checked':'')+' aria-label="Compact tables"></div>'+
+ '<div class="setrow"><div>Fullscreen<small>Hide browser controls (press Esc to exit).</small></div><button class="btn secondary sm" data-act="fs">Toggle fullscreen</button></div></div></div>'+
+ '<div class="card mt"><div class="cardhead">About this workspace</div><div class="setrow"><div>Marketing Operations · Campaign Approval Portal<small>Prototype build. Approvals are simulated locally in this browser and are not connected to any corporate system.</small></div><button class="linkbtn" data-act="reset-open">Reset Demo</button></div></div>';
+}
+
+/* Detail */
+function previewCard(c){
+ var m=S.imgMeta[c.id],url=imgCache[c.id]||svgUri(c);
+ var st=zoom>100?' style="width:'+zoom+'%"':'';
+ return '<div class="card"><div class="cardhead"><div><b>Campaign Creative</b> <span class="muted sm">· '+esc(fileName(c))+'</span></div><div class="zoom"><button class="ib" data-act="zoomout" title="Zoom out" aria-label="Zoom out">−</button><span>'+zoom+'%</span><button class="ib" data-act="zoomin" title="Zoom in" aria-label="Zoom in">+</button><button class="ib" data-act="zoomfit">Fit</button></div></div>'+
+ '<div class="stage'+(zoom>100?' zoomed':'')+'" id="stage"><img src="'+url+'" alt="Campaign creative for '+esc(c.name)+'"'+st+'></div>'+
+ '<div class="cardfoot"><div class="metaline">'+(m?'Uploaded for review · '+esc(m.name)+(m.w?' · '+m.w+' × '+m.h+' px':'')+' · '+fmtSize(m.size):'Digital banner · 1200 × 750 px · Version '+(c.id===MAIN?'2':'1')+' · Uploaded '+esc(c.submitted))+'</div>'+
+ '<div class="foot-actions"><label class="btn secondary sm" style="cursor:pointer">'+icon('up',15)+' Upload image<input type="file" accept="image/*" data-file hidden></label>'+(m?'<button class="btn secondary sm" data-act="usedefault">Restore submitted creative</button>':'')+'</div></div></div>';
+}
+function approvalCard(c){
+ var st=status(c),d=decisionOf(c),mine=c.reviewer===USER.name,body;
+ var due=c.deadline===REVIEW_DATE?'<b>Due today</b>, '+esc(c.deadline):'Due '+esc(c.deadline);
+ if(st==='Pending Approval'){
+  body=mine?'<div class="btnrow"><button class="btn approve lg" data-act="approve">'+icon('check')+' Approve Campaign</button><button class="btn reject lg" data-act="reject">'+icon('x')+' Reject Campaign</button></div><p class="hint">Your decision is recorded in the approval history and visible to the submitting team.</p>'
+   :'<div class="notice">This campaign is assigned to '+esc(c.reviewer)+'. Decision controls are available to the assigned reviewer only.</div>';
+ }else{
+  body='<div class="decision '+(st==='Approved'?'ok':'bad')+'"><div class="dlabel">Decision</div><div class="dstatus">'+st.toUpperCase()+'</div><div class="dmeta"><div>'+esc(d.by)+' · '+esc(d.at)+'</div>'+(d.reason?'<div><b>Reason:</b> '+esc(d.reason)+'</div>':'')+(d.comment?'<div><b>Comment:</b> '+esc(d.comment)+'</div>':'')+'</div></div>';
+ }
+ return '<div class="card"><div class="cardhead">Approval Decision</div><div class="cardbody"><div class="statusrow"><div><div class="lbl">Current status</div>'+badge(st)+'</div><div class="due">'+due+'</div></div>'+body+'</div></div>';
+}
+function infoCard(c){
+ function p(k,v){return '<div><div class="k">'+k+'</div><div class="v">'+v+'</div></div>'}
+ return '<div class="card"><div class="cardhead">Campaign Information</div><div class="dl">'+
+ p('Campaign ID',c.id)+p('Priority',prio(c.priority))+
+ '<div class="full"><div class="k">Campaign Name</div><div class="v">'+esc(c.name)+'</div></div>'+
+ '<div class="full"><div class="k">Product</div><div class="v">'+esc(c.product)+'</div></div>'+
+ p('Campaign Type',esc(c.type))+p('Department',esc(c.dept))+
+ p('Submitted By',esc(c.by))+p('Submission Date',esc(c.submitted))+
+ p('Assigned Reviewer',esc(c.reviewer))+p('Approval Deadline',esc(c.deadline))+
+ p('Last Updated',esc(S.dec[c.id]?S.dec[c.id].at:c.updated))+p('Attachments',c.attach+' files')+
+ '</div></div>';
+}
+function tOverview(c){
+ var chk=checksOf(c).map(function(r){return '<tr><td>'+esc(r[0])+'</td><td class="muted">'+esc(r[1])+'</td><td class="'+(r[2]==='Failed'?'fail':'pass')+'">'+r[2]+'</td></tr>'}).join('');
+ var cm=commentsOf(c).map(function(x){return '<div class="cm"><b>'+esc(x.n)+'</b> <small>· '+esc(x.r)+' · '+esc(x.t)+'</small><p>'+esc(x.x)+'</p></div>'}).join('')||'<div class="cm muted">No review comments have been added.</div>';
+ return '<div class="split"><div>'+previewCard(c)+'</div><div class="side">'+approvalCard(c)+infoCard(c)+'</div></div>'+
+ '<div class="grid2 mt"><div class="card"><div class="cardhead">Review Checklist</div><div class="tblwrap"><table class="tbl"><thead><tr><th>Item</th><th>Owner</th><th>Result</th></tr></thead><tbody>'+chk+'</tbody></table></div></div>'+
+ '<div class="card"><div class="cardhead">Review Comments</div>'+cm+'</div></div>';
+}
+function tCreative(c){
+ var m=S.imgMeta[c.id],is=c.id===MAIN;
+ function r(k,v){return '<tr><td class="muted" style="width:170px">'+k+'</td><td>'+v+'</td></tr>'}
+ var rows=r('Asset name',esc(fileName(c)))+r('Format','Digital banner')+r('Dimensions',m&&m.w?m.w+' × '+m.h+' px':'1200 × 750 px')+r('Channels',esc(is?'Social media, display':c.type))+r('Version',is?'2':'1')+r('Uploaded by',esc(c.by))+r('Uploaded on',esc(is?'16 Nov 2026, 3:15 PM':c.submitted+', 2:30 PM'))+r('Preview source',m?'Image uploaded for this review':'Creative as submitted')+
+  r('Headline',esc(is?'Power for Your Journey':c.name))+r('Supporting line',esc(is?'Charge anywhere. Go further.':c.product))+r('Call to action',esc(is?'Discover PB-20':'Learn more'))+r('Legal line',is?'Terms apply.':'Standard promotional terms apply.');
+ return '<div class="split"><div>'+previewCard(c)+'</div><div class="side"><div class="card"><div class="cardhead">Creative Details</div><div class="tblwrap"><table class="tbl"><tbody>'+rows+'</tbody></table></div></div>'+approvalCard(c)+'</div></div>';
+}
+function gauge(s){
+ var pct=Math.min(100,s.peak),col=s.result==='FAILED'?'#b3261e':'#1e7e4a';
+ return '<div class="gauge"><div class="gtrack"><div class="gfill" style="width:'+pct+'%;background:'+col+'"></div><div class="gthr" style="left:60%"></div></div><div class="gscale"><span>0°C</span><span>20°C</span><span>40°C</span><span>60°C</span><span>80°C</span><span>100°C</span></div><div class="gleg">Recorded peak: <b>'+s.peak.toFixed(1)+'°C</b> &nbsp;|&nbsp; Internal test threshold: <b>60°C</b> (vertical marker)</div></div>';
+}
+function vSafety(c){
+ var s=c.safety,f=s.result==='FAILED',dev=(s.peak-60).toFixed(1);
+ return '<div class="paper"><div class="ph"><div><div class="org">GLOBAL CONSUMER LTD.</div><div class="dept">Product Quality &amp; Safety Laboratory</div></div><div class="phr">Internal · Confidential<br>Report ID: '+s.id+'</div></div>'+
+ '<h2>Product Safety Evaluation</h2><div class="resultline">Test Result:<span class="res '+(f?'fail':'pass')+'">'+s.result+'</span></div>'+
+ '<table><tr><th>Document</th><td>Product Safety Evaluation</td></tr><tr><th>Report ID</th><td>'+s.id+'</td></tr><tr><th>Product</th><td>'+esc(c.product)+'</td></tr><tr><th>Linked Campaign</th><td>'+c.id+' — '+esc(c.name)+'</td></tr><tr><th>Test Date</th><td>'+esc(s.date)+'</td></tr><tr><th>Issue Date</th><td>'+esc(s.issued)+' (Version 1.0)</td></tr></table>'+
+ '<h4>1. Summary of Findings</h4><table><tr><th>Test Result</th><td><span class="'+(f?'fail':'pass')+'">'+s.result+'</span></td></tr><tr><th>Finding</th><td>'+(f?'Overheating Risk':'No overheating risk identified')+'</td></tr><tr><th>Peak Temperature</th><td>'+s.peak.toFixed(1)+'°C</td></tr><tr><th>Internal Test Threshold</th><td>60°C</td></tr><tr><th>Margin to Threshold</th><td>'+(f?'+'+dev+'°C above threshold':Math.abs(dev).toFixed(1)+'°C below threshold')+'</td></tr></table>'+
+ '<h4>2. Temperature Measurement</h4>'+gauge(s)+
+ '<h4>3. Test Items</h4><table class="grid"><tr><th>Test item</th><th>Criterion</th><th>Outcome</th></tr><tr><td>Output voltage stability</td><td>Within rated range</td><td class="pass">Pass</td></tr><tr><td>Short-circuit protection</td><td>Automatic shutdown</td><td class="pass">Pass</td></tr><tr><td>Sustained full-load thermal test</td><td>Peak surface temperature ≤ 60°C</td><td class="'+(f?'fail':'pass')+'">'+(f?'Fail':'Pass')+'</td></tr></table>'+
+ '<h4>4. Recommendation</h4><p>'+(f?'Campaign release not recommended pending further review.':'No product safety objection to campaign release.')+'</p>'+
+ '<div class="sigs"><div>Prepared by: Sadia Karim, Test Engineer</div><div>Reviewed by: Rafiq Chowdhury, Quality Assurance Manager</div></div></div>';
+}
+function vBrief(c){
+ var b=c.brief||{obj:'Promote '+c.product+' to existing and prospective customers.',aud:'Existing customers and prospective buyers',ch:c.type,msg:c.name,flight:'As per approved media plan'};
+ function r(k,v){return '<tr><th>'+k+'</th><td>'+esc(v)+'</td></tr>'}
+ return '<div class="paper"><div class="ph"><div><div class="org">GLOBAL CONSUMER LTD.</div><div class="dept">'+esc(c.dept)+'</div></div><div class="phr">Internal<br>Ref: '+c.id+'</div></div><h2>Campaign Brief</h2>'+
+ '<table>'+r('Campaign',c.name)+r('Product',c.product)+r('Campaign type',c.type)+r('Submitted by',c.by+' · '+c.submitted)+r('Objective',b.obj)+r('Target audience',b.aud)+r('Channels',b.ch)+r('Key message',b.msg)+r('Flight dates',b.flight)+'</table></div>';
+}
+function vClaims(c){
+ var cl=c.claims||[['Product specifications as stated in the datasheet','Product datasheet','Verified'],['Promotional offer terms','Commercial terms sheet','Verified']];
+ var rows=cl.map(function(x){return '<tr><td>'+esc(x[0])+'</td><td>'+esc(x[1])+'</td><td class="pass">'+x[2]+'</td></tr>'}).join('');
+ return '<div class="paper"><div class="ph"><div><div class="org">GLOBAL CONSUMER LTD.</div><div class="dept">Legal &amp; Regulatory</div></div><div class="phr">Internal<br>Ref: '+c.id+'-CL</div></div><h2>Claims Substantiation Summary</h2><p>Promotional claims used in the creative and the evidence on file.</p><table class="grid"><tr><th>Claim</th><th>Evidence on file</th><th>Status</th></tr>'+rows+'</table></div>';
+}
+function tDocs(c){
+ var l=docsOf(c).map(function(d){return '<li data-act="doc" data-k="'+d.k+'" class="'+(docSel===d.k?'sel':'')+'"><div style="flex:1"><div class="dn">'+d.name+'</div><div class="dm">'+esc(d.file)+' · '+d.size+'</div><div class="dm">'+esc(d.date)+' · '+esc(d.by)+'</div></div>'+(d.tag?'<span class="badge '+(d.tag==='FAILED'?'bad':'ok')+'" style="align-self:flex-start">'+d.tag+'</span>':'')+'</li>'}).join('');
+ var v=docSel==='brief'?vBrief(c):docSel==='claims'?vClaims(c):vSafety(c);
+ return '<div class="docsplit"><div class="card"><div class="cardhead">Attachments <span class="muted sm">'+c.attach+' files</span></div><ul class="doclist">'+l+'</ul></div><div>'+v+'</div></div>';
+}
+function tHistory(c){
+ var l=historyOf(c).map(function(h){return '<li class="'+(h.kind||'')+'"><div class="tt">'+esc(h.t)+'</div><div class="ev">'+esc(h.e)+'</div><div class="tt">'+esc(h.by)+'</div>'+(h.detail?'<div class="dt">'+esc(h.detail)+'</div>':'')+'</li>'}).join('');
+ return '<div class="card" style="max-width:860px"><div class="cardhead">Approval History</div><ul class="tl">'+l+'</ul></div>';
+}
+function vDetail(){
+ var c=cur(),st=status(c);
+ function tb(k,l,extra){return '<button class="tab'+(tab===k?' active':'')+'" role="tab" aria-selected="'+(tab===k)+'" data-act="tab" data-tab="'+k+'">'+l+(extra||'')+'</button>'}
+ var body=tab==='creative'?tCreative(c):tab==='docs'?tDocs(c):tab==='history'?tHistory(c):tOverview(c);
+ return '<div class="crumbs"><a data-act="nav" data-view="campaigns">Campaigns</a><span>/</span><span>'+c.id+'</span></div>'+
+ '<div class="pagehead"><div><h1>'+esc(c.name)+'</h1><div class="sub">'+c.id+' · '+esc(c.product)+' · '+esc(c.type)+'</div></div><div class="headmeta">'+prio(c.priority)+badge(st)+'</div></div>'+
+ '<div class="tabs" role="tablist">'+tb('overview','Overview')+tb('creative','Creative Preview')+tb('docs','Supporting Documents',c.safety.result==='FAILED'?'<span class="cnt red">1 failed</span>':'<span class="cnt">'+c.attach+'</span>')+tb('history','Approval History','<span class="cnt">'+historyOf(c).length+'</span>')+'</div>'+body;
+}
+
+/* ---------- Rendering ---------- */
+var NAV=[['dashboard','dash','Dashboard'],['campaigns','camp','Campaigns'],['pending','appr','Pending Approvals'],['docs','docs','Product Documents'],['history','hist','Review History'],['notifs','bell','Notifications'],['settings','set','Settings']];
+function renderNav(){
+ var act=view==='detail'?'campaigns':view;
+ $('#sidebar').innerHTML='<div class="navgroup">Workspace</div>'+NAV.map(function(n){
+  var b='';
+  if(n[0]==='pending'&&mineOpen().length)b='<span class="badgec">'+mineOpen().length+'</span>';
+  if(n[0]==='notifs'&&unread())b='<span class="badgec blue">'+unread()+'</span>';
+  return '<button class="nav'+(act===n[0]?' active':'')+'" data-act="nav" data-view="'+n[0]+'" title="'+n[2]+'">'+icon(n[1])+'<span class="lbl">'+n[2]+'</span>'+b+'</button>';
+ }).join('')+'<div class="sidefoot">Marketing Operations<br>Global Consumer Ltd.</div>';
+}
+function renderBell(){
+ var u=unread(),b=$('#bellBtn');
+ b.innerHTML=icon('bell',20)+(u?'<span class="dot">'+u+'</span>':'');
+ $('#bellMenu').innerHTML='<div class="bh"><span>Notifications</span><span class="muted sm">'+u+' unread</span></div>'+S.notifs.slice(0,4).map(function(n){return '<div class="bellitem" data-act="notif" data-id="'+n.id+'"><span class="udot '+(n.read?'read':'')+'"></span><div><div>'+esc(n.text)+'</div><div class="t">'+esc(n.t)+'</div></div></div>'}).join('')+'<div class="bf"><a data-act="nav" data-view="notifs">View all notifications</a></div>';
+}
+function render(){
+ var h;
+ switch(view){case 'dashboard':h=vDashboard();break;case 'campaigns':h=vCampaigns();break;case 'pending':h=vPending();break;case 'docs':h=vDocs();break;case 'history':h=vHistory();break;case 'notifs':h=vNotifs();break;case 'settings':h=vSettings();break;default:h=vDetail()}
+ $('#view').innerHTML=h;
+ document.body.classList.toggle('compact',!!S.prefs.compact);
+ renderNav();renderBell();
+}
+function go(v,o){
+ o=o||{};view=v;
+ if(v==='detail'){selId=o.id||selId;tab=o.tab||'overview';docSel=o.doc||'safety';zoom=100}
+ $('#bellMenu').classList.remove('open');
+ render();$('#main').scrollTop=0;
+}
+
+/* ---------- Toast & modal ---------- */
+function toast(msg,kind){
+ var t=document.createElement('div');t.className='toast'+(kind?' '+kind:'');
+ t.innerHTML=(kind==='rej'?icon('x',16):kind==='info'||kind==='warn'?'':icon('check',16))+'<span>'+esc(msg)+'</span>';
+ $('#toasts').appendChild(t);
+ setTimeout(function(){t.classList.add('out')},3600);setTimeout(function(){t.remove()},4100);
+}
+function openModal(html,focusSel){
+ $('#modalRoot').innerHTML='<div class="backdrop"><div class="modal" role="dialog" aria-modal="true">'+html+'</div></div>';
+ var f=$(focusSel||'[data-act="close"]',$('#modalRoot'));if(f)f.focus();
+}
+function closeModal(){$('#modalRoot').innerHTML=''}
+function approveModal(){
+ var c=cur(),w=c.safety.result==='FAILED'?'<div class="warn">Note: the supporting documents include a failed Product Safety Evaluation ('+c.safety.id+').</div>':'';
+ openModal('<div class="mh"><h3>Approve Campaign</h3></div><div class="mb"><p class="q">Are you sure you want to approve this campaign?</p><div class="ref"><b>'+c.id+'</b> · '+esc(c.name)+'</div>'+w+'</div><div class="mf"><button class="btn secondary" data-act="close">Cancel</button><button class="btn approve" data-act="confirm-approve">Confirm Approval</button></div>');
+}
+function rejectModal(){
+ var c=cur();
+ openModal('<div class="mh"><h3>Reject Campaign</h3></div><div class="mb"><p class="q">Are you sure you want to reject this campaign?</p><div class="ref"><b>'+c.id+'</b> · '+esc(c.name)+'</div>'+
+ '<label for="rjReason">Reason <small>(optional)</small></label><select id="rjReason"><option value="">Select a reason…</option>'+REASONS.map(function(r){return '<option>'+r+'</option>'}).join('')+'</select>'+
+ '<label for="rjComment">Additional comments <small>(optional)</small></label><textarea id="rjComment" placeholder="Add details for the submitting team"></textarea></div>'+
+ '<div class="mf"><button class="btn secondary" data-act="close">Cancel</button><button class="btn reject" data-act="confirm-reject">Confirm Rejection</button></div>');
+}
+function resetModal(){
+ openModal('<div class="mh"><h3>Reset demonstration data</h3></div><div class="mb"><p class="q">Restore all campaigns to their original state?</p><div class="ref">Decisions, history entries, notifications and uploaded images stored in this browser will be cleared.</div></div><div class="mf"><button class="btn secondary" data-act="close">Cancel</button><button class="btn primary" data-act="confirm-reset">Reset Demo</button></div>');
+}
+function decide(kind){
+ var c=cur(),at=nowStr(),ok=kind==='approve',reason='',comment='';
+ if(!ok){var r=$('#rjReason'),m=$('#rjComment');reason=r?r.value:'';comment=m?m.value.trim():''}
+ S.dec[c.id]={status:ok?'Approved':'Rejected',by:USER.name,at:at,reason:reason,comment:comment};
+ (S.hist[c.id]=S.hist[c.id]||[]).push({t:at,e:ok?'Campaign approved.':'Campaign rejected.',by:USER.name,detail:ok?'':(reason?reason+'. ':'')+comment,kind:ok?'ok':'bad'});
+ S.notifs.unshift({id:'u'+Date.now(),t:at,text:'You '+(ok?'approved':'rejected')+' campaign '+c.id+' "'+c.name+'".',cid:c.id,read:true});
+ save();closeModal();tab='overview';render();$('#main').scrollTop=0;
+ toast(ok?'Campaign approved successfully.':'Campaign rejected successfully.',ok?'':'rej');
+}
+function resetDemo(){
+ S=fresh();imgCache={};
+ try{localStorage.removeItem(KEY);CAMPAIGNS.forEach(function(c){localStorage.removeItem(IMGKEY+c.id)})}catch(e){}
+ save();closeModal();query='';sf='';$('#gsearch').value='';go('detail',{id:MAIN});toast('Demonstration data has been reset.','info');
+}
+
+/* ---------- Upload ---------- */
+function handleFile(f){
+ if(!f)return;
+ if(!/^image\//.test(f.type)){toast('Please select an image file (PNG, JPG, WebP or SVG).','warn');return}
+ var id=selId,r=new FileReader();
+ r.onload=function(){
+  var url=r.result,im=new Image();
+  function done(w,h){
+   imgCache[id]=url;S.imgMeta[id]={name:f.name,size:f.size,w:w,h:h};
+   var ok=true;try{localStorage.setItem(IMGKEY+id,url)}catch(e){ok=false}
+   save();zoom=100;render();
+   toast(ok?'Creative image updated.':'Creative image updated for this session only (file too large to store).',ok?'info':'warn');
+  }
+  im.onload=function(){done(im.naturalWidth,im.naturalHeight)};
+  im.onerror=function(){toast('That image could not be read.','warn')};
+  im.src=url;
+ };
+ r.readAsDataURL(f);
+}
+
+/* ---------- Events ---------- */
+function setFS(){
+ var on=!!document.fullscreenElement;
+ $('#fsBtn').innerHTML=icon(on?'fsx':'fs',18);
+}
+function toggleFS(){
+ var el=document.documentElement;
+ if(!document.fullscreenElement){(el.requestFullscreen?el.requestFullscreen():Promise.reject()).catch(function(){toast('Fullscreen is not available in this window.','warn')})}
+ else document.exitFullscreen();
+}
+document.addEventListener('click',function(e){
+ var bd=e.target;
+ if(bd.classList&&bd.classList.contains('backdrop')){closeModal();return}
+ if(!e.target.closest('.bellwrap'))$('#bellMenu').classList.remove('open');
+ var t=e.target.closest('[data-act]');if(!t)return;
+ var a=t.dataset.act,d=t.dataset;
+ switch(a){
+  case 'nav':go(d.view);break;
+  case 'open':go('detail',{id:d.id});break;
+  case 'opendoc':go('detail',{id:d.id,tab:'docs',doc:d.k});break;
+  case 'tab':tab=d.tab;render();break;
+  case 'doc':if(d.k==='asset'){tab='creative'}else docSel=d.k;render();break;
+  case 'approve':approveModal();break;
+  case 'reject':rejectModal();break;
+  case 'close':closeModal();break;
+  case 'confirm-approve':decide('approve');break;
+  case 'confirm-reject':decide('reject');break;
+  case 'zoomin':zoom=Math.min(200,zoom+25);render();break;
+  case 'zoomout':zoom=Math.max(100,zoom-25);render();break;
+  case 'zoomfit':zoom=100;render();break;
+  case 'usedefault':delete imgCache[selId];delete S.imgMeta[selId];try{localStorage.removeItem(IMGKEY+selId)}catch(x){}save();render();toast('Submitted creative restored.','info');break;
+  case 'bell':e.stopPropagation();$('#bellMenu').classList.toggle('open');break;
+  case 'notif':
+   var n=S.notifs.filter(function(x){return x.id===d.id})[0];
+   if(n){n.read=true;save();if(n.cid)go('detail',{id:n.cid});else render()}
+   $('#bellMenu').classList.remove('open');break;
+  case 'markall':S.notifs.forEach(function(x){x.read=true});save();render();break;
+  case 'clearq':query='';$('#gsearch').value='';refreshRows();break;
+  case 'fs':toggleFS();break;
+  case 'profile':go('settings');break;
+  case 'reset-open':resetModal();break;
+  case 'confirm-reset':resetDemo();break;
+ }
+});
+document.addEventListener('input',function(e){
+ if(e.target.id==='gsearch'){query=e.target.value;if(view!=='campaigns'){view='campaigns';render()}else refreshRows()}
+});
+document.addEventListener('change',function(e){
+ var t=e.target;
+ if(t.matches('[data-file]')){handleFile(t.files[0]);t.value=''}
+ else if(t.matches('[data-filter]')){sf=t.value;refreshRows()}
+ else if(t.matches('[data-pref]')){S.prefs[t.dataset.pref]=t.checked;save();document.body.classList.toggle('compact',!!S.prefs.compact)}
+});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('#modalRoot').firstChild)closeModal()});
+document.addEventListener('dragover',function(e){var s=e.target.closest&&e.target.closest('#stage');if(s){e.preventDefault();s.classList.add('drag')}});
+document.addEventListener('dragleave',function(e){var s=$('#stage');if(s)s.classList.remove('drag')});
+document.addEventListener('drop',function(e){var s=e.target.closest&&e.target.closest('#stage');if(s){e.preventDefault();s.classList.remove('drag');handleFile(e.dataTransfer.files[0])}});
+document.addEventListener('fullscreenchange',setFS);
+
+/* ---------- Init ---------- */
+$('#ico-search').innerHTML=icon('search',16);
+$('#tbDate').textContent='Tuesday, 17 November 2026';
+setFS();render();
+})();
+</script>
+</body>
+</html>
